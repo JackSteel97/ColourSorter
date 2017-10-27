@@ -25,9 +25,10 @@ namespace ColourSorter {
             this.Controls.Add(pic);
 
 
+
             img.scramble(1);
             Sorter sorter = new Sorter(img, pic);
-            Thread t = new Thread(new ThreadStart(sorter.bubbleSort));
+            Thread t = new Thread(new ThreadStart(sorter.insertionSort));
             t.Start();
         }
     }

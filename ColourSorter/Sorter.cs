@@ -41,7 +41,7 @@ namespace ColourSorter {
             do {
                 swapped = false;
                 for (int i = 1; i < n; i++){
-                    if (img[i-1].Colour.GetHue() > img[i].Colour.GetHue()) {
+                    if (img[i-1].Hue > img[i].Hue) {
                         //swap
                         Gen.swap(i - 1, i,img);
                         swapped = true;
@@ -53,9 +53,29 @@ namespace ColourSorter {
             } while (swapped);
         }
 
+        public void insertionSort() {
+            int i = 1;
+            while(i < img.Count) {
+                int j = i;
+                while (j > 0 && img[j - 1].Hue > img[j].Hue) {
+                    Gen.swap(j, j - 1, img);
+                    j--;
+                    
+                }
+                i++;
+                Thread t = new Thread(new ThreadStart(update));
+                t.Start();
+            }
+        }
+
         private void update() {
-            ctx.Image = Gen.getBitmap(img.ToList());
-            refreshThreadSafe(ctx);
+            try {
+                ctx.Image = Gen.getBitmap(img.ToList());
+                refreshThreadSafe(ctx);
+            } catch (Exception e) {
+                update();
+            }
+            
         }
     }
 }
