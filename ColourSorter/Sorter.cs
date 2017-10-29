@@ -94,19 +94,23 @@ namespace ColourSorter {
         }
 
         private int partition(List<Pixel> A, int low, int high) {
-            Pixel pivot = A[high];
+            Pixel pivot = A[low];
             int i = low - 1;
-            for (int j = low; j < high; j++) {
-                if (A[j].Hue < pivot.Hue) {
+            int j = high + 1;
+            while (true) {
+                do {
                     i++;
-                    Gen.swap(i, j, A);
+                } while (A[i].Hue < pivot.Hue);
+                do {
+                    j--;
+                } while (A[j].Hue > pivot.Hue);
+                if (i >= j) {
+                    startUpdate();
+                    return j;
                 }
+                Gen.swap(i, j, A);
             }
-            if (A[high].Hue < A[i + 1].Hue) {
-                Gen.swap(i + 1, high, A);
-            }
-            startUpdate();
-            return i + 1;
+            
         }
 
         private void startUpdate() {
