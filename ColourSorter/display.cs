@@ -28,7 +28,7 @@ namespace ColourSorter {
 
             img.scramble(1);
             Sorter sorter = new Sorter(img, pic);
-            Thread t = new Thread(new ThreadStart(sorter.insertionSort));
+            Thread t = new Thread(new ThreadStart(sorter.startQuickSort));
             t.Start();
         }
     }

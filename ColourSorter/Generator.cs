@@ -20,8 +20,15 @@ namespace ColourSorter {
             Height = height;
             int totalNum = width * height;
             pixels = new List<Pixel>(totalNum);
+            
             for(int y = 0; y < height; y++) {
-                HsvToRgb(y % 360, 1, 1, out int r, out int g, out int b);
+                int r, g, b;
+                if (height < 360) {
+                    HsvToRgb((int)y * (360 / height), 1,1,out r, out g, out b);
+                } else {
+                    HsvToRgb(y % 360, 1, 1, out r, out g, out b);
+                }
+                
                 Color colour = Color.FromArgb(r, g, b);                
                 for(int x = 0; x < width; x++) {
                     pixels.Add(new Pixel(x, y, colour));
