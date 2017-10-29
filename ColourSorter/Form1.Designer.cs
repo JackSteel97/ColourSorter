@@ -28,13 +28,15 @@
             this.widthNum = new System.Windows.Forms.NumericUpDown();
             this.heightLbl = new System.Windows.Forms.Label();
             this.widthLbl = new System.Windows.Forms.Label();
+            this.GenBtn = new System.Windows.Forms.Button();
+            this.fbDialog = new System.Windows.Forms.FolderBrowserDialog();
             ((System.ComponentModel.ISupportInitialize)(this.heightNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.widthNum)).BeginInit();
             this.SuspendLayout();
             // 
             // startBtn
             // 
-            this.startBtn.Location = new System.Drawing.Point(158, 87);
+            this.startBtn.Location = new System.Drawing.Point(167, 59);
             this.startBtn.Name = "startBtn";
             this.startBtn.Size = new System.Drawing.Size(75, 23);
             this.startBtn.TabIndex = 0;
@@ -59,7 +61,7 @@
             this.heightNum.Size = new System.Drawing.Size(65, 20);
             this.heightNum.TabIndex = 1;
             this.heightNum.Value = new decimal(new int[] {
-            1,
+            2,
             0,
             0,
             0});
@@ -81,7 +83,7 @@
             this.widthNum.Size = new System.Drawing.Size(65, 20);
             this.widthNum.TabIndex = 2;
             this.widthNum.Value = new decimal(new int[] {
-            1,
+            2,
             0,
             0,
             0});
@@ -104,11 +106,22 @@
             this.widthLbl.TabIndex = 4;
             this.widthLbl.Text = "Width:";
             // 
+            // GenBtn
+            // 
+            this.GenBtn.Location = new System.Drawing.Point(151, 106);
+            this.GenBtn.Name = "GenBtn";
+            this.GenBtn.Size = new System.Drawing.Size(108, 23);
+            this.GenBtn.TabIndex = 5;
+            this.GenBtn.Text = "Generate File";
+            this.GenBtn.UseVisualStyleBackColor = true;
+            this.GenBtn.Click += new System.EventHandler(this.button1_Click);
+            // 
             // ParentForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(417, 436);
+            this.Controls.Add(this.GenBtn);
             this.Controls.Add(this.widthLbl);
             this.Controls.Add(this.heightLbl);
             this.Controls.Add(this.widthNum);
@@ -131,6 +144,8 @@
         private System.Windows.Forms.NumericUpDown widthNum;
         private System.Windows.Forms.Label heightLbl;
         private System.Windows.Forms.Label widthLbl;
+        private System.Windows.Forms.Button GenBtn;
+        private System.Windows.Forms.FolderBrowserDialog fbDialog;
     }
 }
 

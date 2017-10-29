@@ -1,9 +1,13 @@
-﻿using System;
+﻿using AForge.Video;
+using AForge.Video.FFMPEG;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ColourSorter {
@@ -11,10 +15,16 @@ namespace ColourSorter {
         Generator Gen;
         PictureBox ctx;
         List<Pixel> img;
-        public Sorter(Generator gen,PictureBox context) {
+        string FolderPath;
+        int outputFileCount = 0;
+        List<Bitmap> imgs;
+        public Sorter(Generator gen, PictureBox context, string outputPath = "") {
             Gen = gen;
             ctx = context;
             img = Gen.Pixels.ToList();
+            FolderPath = outputPath;
+            outputFileCount = 0;
+            imgs = new List<Bitmap>(1000);
         }
 
         private delegate void refreshDelegate(Control control);
@@ -28,54 +38,100 @@ namespace ColourSorter {
                 } else {
                     control.Refresh();
                 }
-            }catch(Exception e) {
+            } catch (Exception e) {
                 return;
-            }            
+            }
         }
 
 
-       
-        public void bubbleSort() {           
+
+        public void bubbleSort() {
+            outputFileCount = 0;
+            startUpdate();
             bool swapped = false;
-            int n = img.Count;          
+            int n = img.Count;
             do {
                 swapped = false;
-                for (int i = 1; i < n; i++){
-                    if (img[i-1].Hue > img[i].Hue) {
+                for (int i = 1; i < n; i++) {
+                    if (img[i - 1].Hue > img[i].Hue) {
                         //swap
-                        Gen.swap(i - 1, i,img);
+                        Gen.swap(i - 1, i, img);
                         swapped = true;
-                    }    
+                    }
                 }
-                Thread t = new Thread(new ThreadStart(update));
-                t.Start();
-                n--;                
+                startUpdate();
+                n--;
+
             } while (swapped);
+            startUpdate();
         }
 
         public void insertionSort() {
+            outputFileCount = 0;
             int i = 1;
-            while(i < img.Count) {
+            startUpdate();
+            while (i < img.Count) {
                 int j = i;
                 while (j > 0 && img[j - 1].Hue > img[j].Hue) {
                     Gen.swap(j, j - 1, img);
                     j--;
-                    
+
                 }
                 i++;
-                Thread t = new Thread(new ThreadStart(update));
-                t.Start();
+                startUpdate();
+            }
+            startUpdate();
+        }
+        public void startQuickSort() {
+            quickSort(img, 0, img.Count - 1);
+        }
+        private void quickSort(List<Pixel> A, int low, int high) {       
+            if (low < high) {
+                int p = partition(A, low, high);
+                quickSort(A, low, p - 1);
+                quickSort(A, p + 1, high);
             }
         }
 
-        private void update() {
-            try {
-                ctx.Image = Gen.getBitmap(img.ToList());
-                refreshThreadSafe(ctx);
-            } catch (Exception e) {
-                update();
+        private int partition(List<Pixel> A, int low, int high) {
+            Pixel pivot = A[high];
+            int i = low - 1;
+            for (int j = low; j < high; j++) {
+                if (A[j].Hue < pivot.Hue) {
+                    i++;
+                    Gen.swap(i, j, A);
+                }
             }
-            
+            if (A[high].Hue < A[i + 1].Hue) {
+                Gen.swap(i + 1, high, A);
+            }
+            return i + 1;
+        }
+
+        private void startUpdate() {
+            if (ctx != null) {
+                Thread t = new Thread(update);
+                t.Start(Gen.getBitmap(img.ToList()));
+            } else if (!string.IsNullOrWhiteSpace(FolderPath)) {
+                //write file
+                Bitmap bmp = Gen.getBitmap(img.ToList());
+                bmp.Save(FolderPath + "\\img_" + outputFileCount.ToString() + ".png");
+                outputFileCount++;
+            }
+
+        }
+
+        private void update(object image) {
+            try {
+                Bitmap bmp = (Bitmap)image;
+                imgs.Add(bmp);
+                ctx.Image = bmp;
+                refreshThreadSafe(ctx);
+
+            } catch (Exception e) {
+                update(image);
+            }
+
         }
     }
 }
